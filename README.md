@@ -67,6 +67,7 @@ usage: main.py [-h] [--region REGION] [--instance-id INSTANCE_ID] [--keypair KEY
 
 optional arguments:
   -h, --help                show this help message and exit
+  --profile-name            profile name
   --region REGION           region name
   --instance-id INSTANCE_ID EC2 instance id
   --keypair KEYPAIR         existing key pair name

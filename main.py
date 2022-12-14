@@ -7,6 +7,8 @@ from src.scanner import Scanner
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
+    parser.add_argument('--profile-name', action='store', dest='profile_name', type=str,
+                        help='profile name', required=False)
     parser.add_argument('--region', action='store', dest='region', type=str,
                         help='region name', required=False)
     parser.add_argument('--instance-id', action='store', dest='instance_id', type=str,
@@ -22,10 +24,13 @@ if __name__ == "__main__":
 
     cmd_args = parser.parse_args()
     logger = setup_logger(log_level=cmd_args.log_level)
-    snapper = Snapper(logger=logger)
-    if cmd_args.region:
+    snapper = Snapper(logger=logger, profile=cmd_args.profile_name)
+
+    if cmd_args.region in snapper.get_regions_list():
+
         snapper.region = cmd_args.region
     else:
+        print("The set region is not in your listed regions")
         snapper.region = snapper.select_region()
 
     snapper.create_client()
@@ -37,7 +42,7 @@ if __name__ == "__main__":
 
     volume_id, selected_az, snapshot_id = snapper.snapshot2volume(volume_id=source_volume_id)
 
-    scanner = Scanner(logger=logger, region=snapper.region)
+    scanner = Scanner(logger=logger, region=snapper.region,profile=cmd_args.profile_name)
     if cmd_args.keypair:
         scanner.keypair_name = cmd_args.keypair
     else:

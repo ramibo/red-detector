@@ -5,15 +5,17 @@ from botocore.exceptions import WaiterError, ClientError
 
 
 class Snapper:
-    def __init__(self, logger):
+    def __init__(self, logger, profile: str):
+        self.profile = profile
         self.logger = logger
+        self.session=boto3.Session(profile_name=self.profile)
         self.region = "us-east-1"
-        self.client = boto3.client('ec2', region_name=self.region)
-        self.ec2 = boto3.resource('ec2', region_name=self.region)
+        self.client = self.session.client('ec2', region_name=self.region)
+        self.ec2 = self.session.resource('ec2', region_name=self.region)
 
     def create_client(self):
-        self.client = boto3.client('ec2', region_name=self.region)
-        self.ec2 = boto3.resource('ec2', region_name=self.region)
+        self.client = self.session.client('ec2', region_name=self.region)
+        self.ec2 = self.session.resource('ec2', region_name=self.region)
 
     def get_regions_list(self):
         try:
@@ -189,5 +191,3 @@ class Snapper:
         else:
             self.logger.error("snapshot process failed exiting.")
             exit(99)
-
-

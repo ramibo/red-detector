@@ -12,11 +12,13 @@ from src import remote_scripts
 
 
 class Scanner:
-    def __init__(self, logger, region):
+    def __init__(self, logger, region,profile: str):
+        self.profile = profile
         self.logger = logger
+        self.session = boto3.Session(profile_name=self.profile)
         self.region = region
-        self.client = boto3.client('ec2', region_name=region)
-        self.ec2 = boto3.resource('ec2', region_name=region)
+        self.client = self.session.client('ec2', region_name=region)
+        self.ec2 = self.session.resource('ec2', region_name=region)
         self.keypair_name = None
 
     def create_keypair(self, key_name='red_detector_key'):
